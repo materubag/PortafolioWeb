@@ -1,0 +1,119 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { translate, type Lang } from "../i18n";
+import ProjectCard from "./ProjectCard.astro";
+
+interface Props {
+  lang: Lang;
+  projects: CollectionEntry<"projects">[];
+}
+const { lang, projects } = Astro.props;
+const t = (es: string, en: string) => translate(lang, es, en);
+const filters = {
+  all: t("Todos", "All"),
+  web: t("Desarrollo web", "Web development"),
+  integration: t("Integración de sistemas", "Systems integration"),
+  automation: t("Automatización", "Automation"),
+  ai: t("Inteligencia artificial", "Artificial intelligence"),
+  engineering: t("Ingeniería de software", "Software engineering"),
+};
+const categoryBySlug: Record<string, Exclude<keyof typeof filters, "all">> = {
+  "cm-stock": "web",
+  "conlac-t": "web",
+  reasons: "web",
+  "flota-traccar": "integration",
+  "trello-github": "automation",
+  "face-access-cnn": "ai",
+  "smartpick-recommender": "ai",
+  icase: "engineering",
+};
+---
+
+<div data-catalog>
+  <div
+    class="catalog-controls"
+    role="group"
+    aria-label={t("Filtrar por categoría", "Filter by category")}
+    hidden
+  >
+    {Object.entries(filters).map(([id, label]) => (
+      <button
+        class="button outline"
+        type="button"
+        aria-pressed={id === "all"}
+        data-filter={id}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+  <p
+    class="catalog-count"
+    role="status"
+    data-count
+    data-singular={t("proyecto", "project")}
+    data-plural={t("proyectos", "projects")}
+  >
+    {projects.length} {t("proyectos", "projects")}
+  </p>
+  <div class="project-grid">
+    {projects.map((entry) => (
+      <div
+        class="catalog-card"
+        data-category={categoryBySlug[entry.data.slug] ?? ""}
+      >
+        <ProjectCard {entry} />
+      </div>
+    ))}
+  </div>
+</div>
+<script>
+  const catalog = document.querySelector("[data-catalog]");
+  const controls = catalog?.querySelector<HTMLElement>(".catalog-controls");
+  const count = catalog?.querySelector<HTMLElement>("[data-count]");
+  if (catalog && controls && count) {
+    const buttons = Array.from(
+      controls.querySelectorAll<HTMLButtonElement>("[data-filter]"),
+    );
+    const cards = Array.from(
+      catalog.querySelectorAll<HTMLElement>("[data-category]"),
+    );
+    controls.hidden = false;
+    for (const button of buttons) {
+      button.addEventListener("click", () => {
+        const filter = button.dataset.filter;
+        let visible = 0;
+        for (const card of cards) {
+          card.hidden = filter !== "all" && card.dataset.category !== filter;
+          if (!card.hidden) visible++;
+        }
+        for (const control of buttons) {
+          control.setAttribute("aria-pressed", String(control === button));
+        }
+        count.textContent =
+          visible +
+          " " +
+          (visible === 1 ? count.dataset.singular : count.dataset.plural);
+      });
+    }
+  }
+</script>
+<style>
+  .catalog-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .catalog-controls button[aria-pressed="true"] {
+    color: white;
+    background: var(--deep);
+  }
+  .catalog-count {
+    margin-block: 0.8rem 1.25rem;
+    color: var(--muted);
+  }
+  .catalog-card {
+    min-width: 0;
+    display: grid;
+  }
+</style>

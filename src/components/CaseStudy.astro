@@ -9,7 +9,7 @@ const p = entry.data;
 const t = (es: string, en: string) => translate(p.lang, es, en);
 const { Content } = await render(entry);
 const others = (await projectsFor(p.lang)).filter(
-  ({ data }) => data.slug !== p.slug,
+  ({ data }) => data.slug !== p.slug && (!p.featured || data.featured),
 );
 ---
 

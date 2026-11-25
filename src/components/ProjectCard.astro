@@ -17,7 +17,9 @@ const p = entry.data;
     <div class="card-copy">
       <div class="project-meta mono">
         <span>{p.category}</span>
-        <time datetime={String(p.year)}>{p.year}</time>
+        {p.year !== undefined && (
+          <time datetime={String(p.year)}>{p.year}</time>
+        )}
       </div>
       <h3>{p.title}</h3>
       <p>{p.description}</p>

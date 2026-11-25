@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260">
+  <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0v20" fill="none" stroke="#704c83" stroke-opacity=".12"/></pattern></defs>
+  <rect width="520" height="260" fill="url(#grid)"/>
+  <g fill="#faf0ff" stroke="#704c83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 77h93m-93 11h61m-61 11h77m-77 57h93m-93 11h61m-61 11h77" fill="none" opacity=".55"/><path d="M125 88h26m-26 79h26m110-79h13l30 40m-43 39h13l30-39m55 0h36m-8-6 8 6-8 6" fill="none"/><rect x="151" y="65" width="110" height="46" rx="5"/><rect x="151" y="144" width="110" height="46" rx="5"/><path d="M304 128l27-27 28 27-28 27z"/><rect x="395" y="70" width="94" height="115" rx="6"/><path d="M413 90h60v11h-60zm0 24h47v11h-47zm0 24h31v11h-31z" fill="#c3a6cf"/>
+  </g>
+  <g fill="#704c83" text-anchor="middle" font-family="monospace" font-size="13">
+    <text x="206" y="93">TF-IDF / cos</text>
+    <text x="206" y="172">Collab.</text>
+    <text x="331" y="133">Σ</text>
+    <text x="442" y="170">Ranking → API</text>
+  </g>
+</svg>

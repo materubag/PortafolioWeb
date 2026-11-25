@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import Base from "../layouts/Base.astro";
 import ProjectCard from "./ProjectCard.astro";
+import ProjectCatalog from "./ProjectCatalog.astro";
 import ContactLinks from "./ContactLinks.astro";
 import CvViewer from "./CvViewer.astro";
 import { profile, primary, skills, certifications } from "../data/profile";
@@ -30,8 +31,8 @@ const about = t(
 const descriptions = {
   home: intro,
   projects: t(
-    "Casos de estudio de desarrollo web, automatización y visión por computador.",
-    "Case studies in web development, automation, and computer vision.",
+    "Casos de estudio de desarrollo web, integración, automatización, inteligencia artificial e ingeniería de software.",
+    "Case studies in web development, integration, automation, AI, and software engineering.",
   ),
   about: about,
   contact: t(
@@ -155,11 +156,7 @@ const date = new Intl.DateTimeFormat(lang, {
       <h1>{labels[lang].projects}</h1>
       <p class="lede">{descriptions.projects}</p>
       <h2 class="sr-only">{t("Casos de estudio", "Case studies")}</h2>
-      <div class="project-grid">
-        {projects.map((entry) => (
-          <ProjectCard {entry} />
-        ))}
-      </div>
+      <ProjectCatalog {lang} {projects} />
     </section>
   )}
   {section === "about" && (

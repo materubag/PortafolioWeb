@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260">
+  <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0v20" fill="none" stroke="#81512c" stroke-opacity=".12"/></pattern></defs>
+  <rect width="520" height="260" fill="url(#grid)"/>
+  <g fill="#fff6e9" stroke="#81512c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="30" y="83" width="65" height="91" rx="4"/><path d="M42 102h38m-38 13h38m-38 13h32M95 128h34m-7-5 7 5-7 5m77-5h34m-7-5 7 5-7 5m77-5h35m-7-5 7 5-7 5m68-5h36m-7-5 7 5-7 5" fill="none"/><rect x="130" y="103" width="69" height="51" rx="5"/><path d="M165 114l12 14-12 14-12-14z"/><rect x="233" y="103" width="70" height="51" rx="5"/><path d="M255 128l9 10 19-20" fill="none"/><path d="M338 108h61v39c0 11-61 11-61 0z"/><ellipse cx="368.5" cy="108" rx="30.5" ry="8"/><rect x="435" y="101" width="57" height="54" rx="4"/><path d="M435 114h57m-43 11h12v10h-12zm20 13h11v8h-11z" fill="none"/>
+  </g>
+  <g fill="#81512c" text-anchor="middle" font-family="monospace" font-size="13">
+    <text x="268" y="181">JSON</text>
+    <text x="368" y="181">PostgreSQL</text>
+    <text x="464" y="181">Mermaid</text>
+  </g>
+</svg>

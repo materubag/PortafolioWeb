@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260">
+  <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0v20" fill="none" stroke="#55578b" stroke-opacity=".12"/></pattern></defs>
+  <rect width="520" height="260" fill="url(#grid)"/>
+  <g fill="#f5f3ff" stroke="#55578b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 128h48m124 0h51M260 99V74m0 83v27" fill="none" stroke-dasharray="4 5"/><rect x="198" y="99" width="124" height="58" rx="6"/><circle cx="260" cy="50" r="24"/><circle cx="260" cy="44" r="7"/><path d="M246 64c2-11 26-11 28 0" fill="none"/><rect x="53" y="104" width="97" height="49" rx="5"/><path d="M53 116h97m-84 12h63m-63 12h46" fill="none"/><path d="M373 92h51l28 26v44h-79z"/><path d="M423 92v26h29m-64 12h50m-50 12h35" fill="none"/><path d="M232 190h56v22c0 12-56 12-56 0z"/><ellipse cx="260" cy="190" rx="28" ry="8"/>
+  </g>
+  <g fill="#55578b" text-anchor="middle" font-family="monospace" font-size="13">
+    <text x="260" y="133">REST API</text>
+  </g>
+</svg>
