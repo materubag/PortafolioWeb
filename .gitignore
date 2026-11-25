@@ -1,0 +1,17 @@
+node_modules/
+.astro/
+dist/
+.wrangler/
+.env
+.env.*
+!.env.example
+.dev.vars*
+*.local
+/private/
+/MateoRubio_2026_CV.pdf
+/BannerPerfil.png
+/.banner-review.png
+/.pdf-tools/
+/.local-tools/
+playwright-report/
+test-results/

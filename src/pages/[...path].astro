@@ -1,0 +1,36 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { CollectionEntry } from "astro:content";
+import PortfolioPage from "../components/PortfolioPage.astro";
+import CaseStudy from "../components/CaseStudy.astro";
+import { route, sections, type Lang, type Section } from "../i18n";
+import { projectsFor } from "../utils/projects";
+
+interface Props {
+  lang: Lang;
+  section: Section;
+  entry?: CollectionEntry<"projects">;
+}
+export const getStaticPaths = (async () => {
+  const paths = [];
+  for (const lang of ["es", "en"] as const) {
+    for (const section of sections) {
+      if (lang === "es" && section === "home") continue;
+      paths.push({
+        params: { path: route(lang, section).slice(1, -1) },
+        props: { lang, section },
+      });
+    }
+    for (const entry of await projectsFor(lang)) {
+      paths.push({
+        params: { path: route(lang, "projects", entry.data.slug).slice(1, -1) },
+        props: { lang, section: "projects" as const, entry },
+      });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+const { lang, section, entry } = Astro.props;
+---
+
+{entry ? <CaseStudy {entry} /> : <PortfolioPage {lang} {section} />}

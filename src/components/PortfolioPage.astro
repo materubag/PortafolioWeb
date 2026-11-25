@@ -1,0 +1,302 @@
+---
+import { MapPin, GitFork, BriefcaseBusiness } from "@lucide/astro";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import Base from "../layouts/Base.astro";
+import ProjectCard from "./ProjectCard.astro";
+import ContactLinks from "./ContactLinks.astro";
+import CvViewer from "./CvViewer.astro";
+import { profile, primary, skills, certifications } from "../data/profile";
+import { labels, route, translate, type Lang, type Section } from "../i18n";
+import { projectsFor } from "../utils/projects";
+interface Props {
+  lang: Lang;
+  section: Section;
+}
+const { lang, section } = Astro.props;
+const t = (es: string, en: string) => translate(lang, es, en);
+const projects =
+  section === "home" || section === "projects" ? await projectsFor(lang) : [];
+const cvExists =
+  section === "cv" && existsSync(join(process.cwd(), "public", profile.cv));
+const intro = t(
+  "Desarrollo aplicaciones web, integro sistemas y automatizo procesos para resolver problemas reales.",
+  "I build web applications, integrate systems, and automate workflows to solve real problems.",
+);
+const about = t(
+  "Estudio Ingeniería de Software en la Universidad Técnica de Ambato. Me interesa el backend, la arquitectura de software y cómo conectar sistemas para resolver problemas concretos.",
+  "I study Software Engineering at Universidad Técnica de Ambato. I’m interested in backend development, software architecture, and connecting systems to solve practical problems.",
+);
+const descriptions = {
+  home: intro,
+  projects: t(
+    "Casos de estudio de desarrollo web, automatización y visión por computador.",
+    "Case studies in web development, automation, and computer vision.",
+  ),
+  about: about,
+  contact: t(
+    "Hablemos de desarrollo de software, proyectos y oportunidades profesionales.",
+    "Let’s talk about software development, projects, and professional opportunities.",
+  ),
+  cv: t(
+    "Consulta el currículum de Mateo Rubio y su perfil profesional.",
+    "View Mateo Rubio’s résumé and professional profile.",
+  ),
+};
+const date = new Intl.DateTimeFormat(lang, {
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+---
+
+<Base
+  {lang}
+  {section}
+  title={labels[lang][section]}
+  description={descriptions[section]}
+>
+  {section === "home" && (
+    <>
+      <section class="hero wrap">
+        <div class="hero-copy">
+          <p class="location mono">
+            <MapPin size={17} aria-hidden="true" /> {profile.city}
+          </p>
+          <h1>
+            <span>{t("Hola, soy", "Hi, I’m")}</span>Mateo Rubio
+            <span class="hero-period">.</span>
+          </h1>
+          <p class="hero-role">{profile.title}</p>
+          <p class="hero-intro">{intro}</p>
+          <div class="hero-actions flex flex-wrap gap-3">
+            <a class="button solid" href={route(lang, "projects")}>
+              {t("Explorar proyectos", "Explore projects")}
+            </a>
+            <a class="button outline" href={route(lang, "cv")}>
+              {t("Ver CV", "View résumé")}
+            </a>
+          </div>
+          <div class="socials hero-socials">
+            <a href={profile.github}>
+              <GitFork size={17} aria-hidden="true" /> GitHub
+            </a>
+            <a href={profile.linkedin}>
+              <BriefcaseBusiness size={17} aria-hidden="true" /> LinkedIn
+            </a>
+          </div>
+        </div>
+        <figure class="hero-art">
+          <img
+            src="/images/portrait-800.webp"
+            srcset="/images/portrait-480.webp 480w, /images/portrait-800.webp 800w, /images/portrait-1160.webp 1160w"
+            sizes="(min-width: 900px) 43vw, 92vw"
+            width="1160"
+            height="1138"
+            fetchpriority="high"
+            alt={t(
+              "Retrato geométrico de Mateo Rubio en azul petróleo y crema",
+              "Geometric portrait of Mateo Rubio in deep teal and cream",
+            )}
+          />
+        </figure>
+      </section>
+      <section class="stack-band">
+        <div class="wrap stack-row">
+          <h2 class="eyebrow">
+            {t("Tecnologías principales", "Core technologies")}
+          </h2>
+          <ul>
+            {primary.map((tech) => (
+              <li>{tech}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <section class="wrap selected">
+        <div class="section-heading">
+          <div>
+            <h2>{t("Proyectos seleccionados", "Selected projects")}</h2>
+          </div>
+          <a class="text-link" href={route(lang, "projects")}>
+            {t("Ver todos los proyectos", "View all projects")}
+          </a>
+        </div>
+        <div class="project-grid">
+          {projects
+            .filter(({ data }) => data.featured)
+            .map((entry) => (
+              <ProjectCard {entry} />
+            ))}
+        </div>
+      </section>
+      <section class="wrap home-about split-section">
+        <h2>{t("Sobre mí", "About me")}</h2>
+        <div>
+          <p>{about}</p>
+          <a class="text-link" href={route(lang, "about")}>
+            {t("Ver perfil y formación", "View profile and education")}
+          </a>
+        </div>
+      </section>
+      <section class="contact-band">
+        <div class="wrap split-section">
+          <h2>{t("Hablemos", "Let’s talk")}</h2>
+          <div>
+            <p>{descriptions.contact}</p>
+            <ContactLinks {lang} />
+          </div>
+        </div>
+      </section>
+    </>
+  )}
+  {section === "projects" && (
+    <section class="wrap page">
+      <h1>{labels[lang].projects}</h1>
+      <p class="lede">{descriptions.projects}</p>
+      <h2 class="sr-only">{t("Casos de estudio", "Case studies")}</h2>
+      <div class="project-grid">
+        {projects.map((entry) => (
+          <ProjectCard {entry} />
+        ))}
+      </div>
+    </section>
+  )}
+  {section === "about" && (
+    <div class="wrap page">
+      <h1>{labels[lang].about}</h1>
+      <p class="lede">{about}</p>
+      <div class="about-grid">
+        <section>
+          <h2>{t("Perfil", "Profile")}</h2>
+          <p>
+            {t(
+              "He trabajado en aplicaciones para organizaciones reales a través de proyectos colaborativos y universitarios. Disfruto entender cómo funciona un sistema, descomponer problemas y aprender las herramientas que necesito para resolverlos. Me gusta concentrarme en los detalles y compartir lo que aprendo con el equipo.",
+              "I’ve worked on applications for real organizations through collaborative and university projects. I enjoy understanding how systems work, breaking down problems, and learning the tools I need to solve them. I like digging into details and sharing what I learn with my team.",
+            )}
+          </p>
+          <p>
+            {t(
+              "Fuera del código me interesan los videojuegos, la música, la ciencia y las series. Sigo explorando la inteligencia artificial, la tecnología y el desarrollo backend.",
+              "Outside of coding, I enjoy video games, music, science, and TV series. I continue to explore AI, technology, and backend development.",
+            )}
+          </p>
+          <h2>{t("Formación", "Education")}</h2>
+          <p>
+            <strong>
+              {t("Ingeniería de Software", "Software Engineering")}
+            </strong>
+            <br />
+            {profile.university}
+            <br />
+            {t(
+              "Octavo semestre · Noviembre de 2022 – diciembre de 2027 (graduación prevista)",
+              "Eighth semester · November 2022 – December 2027 (expected graduation)",
+            )}
+          </p>
+          <h2>{t("Idiomas", "Languages")}</h2>
+          <p>
+            {t(
+              "Español nativo · Inglés intermedio (B1)",
+              "Native Spanish · Intermediate English (B1)",
+            )}
+          </p>
+        </section>
+        <section>
+          <h2>{t("Tecnologías", "Technologies")}</h2>
+          <h3>{t("Principales", "Core")}</h3>
+          <div class="tags">
+            {primary.map((item) => (
+              <span>{item}</span>
+            ))}
+          </div>
+          <h3>{t("Por área", "By area")}</h3>
+          <dl class="detail-list">
+            {skills.map(([es, en, list]) => (
+              <div>
+                <dt>{t(es, en)}</dt>
+                <dd>
+                  {list}
+                  {es === "Inteligencia artificial" &&
+                    t(
+                      ", procesamiento digital de imágenes",
+                      ", digital image processing",
+                    )}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p>
+            {t(
+              "Este portafolio está desarrollado con Astro.",
+              "This portfolio is built with Astro.",
+            )}
+          </p>
+        </section>
+      </div>
+      <section class="certifications">
+        <h2>{t("Certificaciones", "Certifications")}</h2>
+        <div class="about-grid">
+          {Object.entries(certifications).map(([issuer, items]) => (
+            <div>
+              <h3>{issuer}</h3>
+              <ul>
+                {items.map(([name, month]) => (
+                  <li>
+                    <span>{name}</span>
+                    <time datetime={month}>
+                      {date.format(new Date(month + "-01T00:00:00Z"))}
+                    </time>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <a class="text-link" href={profile.credentials}>
+          {t(
+            "Consultar credenciales en LinkedIn",
+            "View credentials on LinkedIn",
+          )}
+        </a>
+      </section>
+    </div>
+  )}
+  {section === "contact" && (
+    <section class="wrap page narrow">
+      <h1>{labels[lang].contact}</h1>
+      <p class="lede">{descriptions.contact}</p>
+      <p class="location mono">
+        <MapPin size={17} aria-hidden="true" />
+        {profile.city}
+      </p>
+      <ContactLinks {lang} copy />
+    </section>
+  )}
+  {section === "cv" && (
+    <section class="wrap page cv-page">
+      <h1>{t("Currículum", "Résumé")}</h1>
+      <p class="lede">
+        {profile.name} · {profile.title}
+      </p>
+      {cvExists ? (
+        <CvViewer {lang} />
+      ) : (
+        <>
+          <p>
+            {t(
+              "Puedes solicitar una copia del currículum por correo.",
+              "You can request a copy of my résumé by email.",
+            )}
+          </p>
+          <a
+            class="button solid"
+            href={`mailto:${profile.email}?subject=${encodeURIComponent(t("Solicitud de CV", "Résumé request"))}`}
+          >
+            {t("Solicitar CV por correo", "Request résumé by email")}
+          </a>
+        </>
+      )}
+    </section>
+  )}
+</Base>

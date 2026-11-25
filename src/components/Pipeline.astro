@@ -1,0 +1,46 @@
+---
+import { translate, type Lang } from "../i18n";
+const { slug, lang } = Astro.props as { slug: string; lang: Lang };
+const t = (es: string, en: string) => translate(lang, es, en);
+const steps =
+  slug === "trello-github"
+    ? [
+        t("Tarjeta Trello", "Trello card"),
+        "Webhook",
+        t("Validar evento", "Validate event"),
+        "dev",
+        t("Nombrar rama", "Name branch"),
+        "develop",
+        "feature/",
+      ]
+    : [
+        "Webcam",
+        "YuNet",
+        t("ROI y alineación", "ROI and alignment"),
+        t("Preprocesamiento", "Preprocessing"),
+        "CNN",
+        t("Decisión", "Decision"),
+        t("Acceso simulado", "Simulated access"),
+      ];
+---
+
+<figure class="pipeline">
+  <figcaption>{t("Flujo del sistema", "System workflow")}</figcaption>
+  <ol>
+    {steps.map((step, index) => (
+      <li>
+        <span>{step}</span>
+        {index < steps.length - 1 && (
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+            <path
+              d="M3 10h13m-5-5 5 5-5 5"
+              stroke="currentColor"
+              stroke-width="1.5"
+              fill="none"
+            />
+          </svg>
+        )}
+      </li>
+    ))}
+  </ol>
+</figure>

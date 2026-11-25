@@ -1,0 +1,137 @@
+---
+import {
+  Download,
+  ExternalLink,
+  FileText,
+  ZoomIn,
+  ZoomOut,
+} from "@lucide/astro";
+import preview from "../assets/cv/preview.webp";
+import { profile } from "../data/profile";
+import { translate, type Lang } from "../i18n";
+
+const { lang } = Astro.props as { lang: Lang };
+const t = (es: string, en: string) => translate(lang, es, en);
+---
+
+<section
+  class="cv-viewer"
+  aria-label={t("Visor del currículum", "Résumé viewer")}
+>
+  <div class="cv-toolbar">
+    <span class="cv-label">
+      <FileText size={19} aria-hidden="true" />
+      <span>Mateo Rubio · PDF</span>
+    </span>
+    <div class="flex flex-wrap gap-2">
+      <button
+        type="button"
+        class="button outline cv-zoom"
+        aria-controls="cv-sheet"
+        hidden
+      >
+        <span class="flex items-center gap-2" data-zoom-in>
+          <ZoomIn size={16} aria-hidden="true" />
+          {t("Ampliar", "Zoom in")}
+        </span>
+        <span class="flex items-center gap-2" data-zoom-out hidden>
+          <ZoomOut size={16} aria-hidden="true" />
+          {t("Alejar", "Zoom out")}
+        </span>
+      </button>
+      <a
+        class="button outline"
+        href={profile.cv}
+        target="_blank"
+        rel="noopener"
+      >
+        <ExternalLink size={16} aria-hidden="true" />
+        {t("Abrir PDF", "Open PDF")}
+      </a>
+      <a class="button solid" href={profile.cv} download>
+        <Download size={16} aria-hidden="true" />
+        {t("Descargar PDF", "Download PDF")}
+      </a>
+    </div>
+  </div>
+  <div
+    class="cv-sheet"
+    id="cv-sheet"
+    role="region"
+    aria-label={t("Documento", "Document")}
+  >
+    <img
+      src={preview.src}
+      width={preview.width}
+      height={preview.height}
+      alt={t(
+        "Vista previa del currículum de Mateo Rubio. Abre el PDF para leer el texto seleccionable.",
+        "Preview of Mateo Rubio’s résumé. Open the PDF to read the selectable text.",
+      )}
+    />
+  </div>
+</section>
+
+<script>
+  const zoom = document.querySelector<HTMLButtonElement>(".cv-zoom");
+  const sheet = document.getElementById("cv-sheet");
+  const zoomIn = zoom?.querySelector<HTMLElement>("[data-zoom-in]");
+  const zoomOut = zoom?.querySelector<HTMLElement>("[data-zoom-out]");
+  if (zoom && sheet && zoomIn && zoomOut) {
+    zoom.hidden = false;
+    zoom.addEventListener("click", () => {
+      const expanded = sheet.classList.toggle("is-zoomed");
+      zoomIn.hidden = expanded;
+      zoomOut.hidden = !expanded;
+      if (expanded) {
+        sheet.tabIndex = 0;
+      } else {
+        sheet.removeAttribute("tabindex");
+        sheet.scrollLeft = 0;
+      }
+    });
+  }
+</script>
+
+<style>
+  :global(.cv-page) {
+    width: min(100% - 1rem, 75rem);
+  }
+  .cv-viewer {
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .cv-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    padding: 0.8rem clamp(0.65rem, 2vw, 1.15rem);
+  }
+  .cv-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--deep);
+    font-weight: 800;
+  }
+  .cv-sheet {
+    overflow-x: auto;
+    padding: clamp(0rem, 2vw - 0.5rem, 1rem);
+    border-top: 1px solid var(--line);
+    background: var(--mint);
+  }
+  .cv-sheet img {
+    width: 100%;
+    margin-inline: auto;
+    height: auto;
+    display: block;
+    background: white;
+    box-shadow: 0 2px 10px #092c3620;
+  }
+  .cv-sheet.is-zoomed img {
+    width: max(150%, 45rem);
+    max-width: none;
+  }
+</style>

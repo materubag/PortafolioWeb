@@ -1,0 +1,182 @@
+---
+import { Menu, GitFork, BriefcaseBusiness } from "@lucide/astro";
+import "@fontsource-variable/raleway";
+import "@fontsource-variable/playfair-display";
+import "@fontsource-variable/playfair-display/wght-italic.css";
+import "../styles/global.css";
+import { profile } from "../data/profile";
+import {
+  labels,
+  route,
+  sections,
+  translate,
+  type Lang,
+  type Section,
+} from "../i18n";
+interface Props {
+  lang: Lang;
+  section?: Section;
+  slug?: string;
+  title: string;
+  description: string;
+}
+const { lang, section, slug, title, description } = Astro.props;
+const t = (es: string, en: string) => translate(lang, es, en);
+const alternate = lang === "es" ? "en" : "es";
+const canonical =
+  Astro.site && section
+    ? new URL(route(lang, section, slug), Astro.site).href
+    : undefined;
+const image = Astro.site && new URL("/images/social.jpg", Astro.site).href;
+const fullTitle =
+  section === "home"
+    ? "Mateo Rubio — Full Stack Developer"
+    : title + " | Mateo Rubio";
+const structured = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      name: profile.name,
+      jobTitle: profile.title,
+      sameAs: [profile.github, profile.linkedin],
+      ...(Astro.site && { url: Astro.site.href }),
+    },
+    {
+      "@type": "WebSite",
+      name: "Mateo Rubio",
+      inLanguage: ["es", "en"],
+      ...(Astro.site && { url: Astro.site.href }),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f7f3" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {Astro.site &&
+      section &&
+      (["es", "en", "x-default"] as const).map((l) => (
+        <link
+          rel="alternate"
+          hreflang={l}
+          href={
+            new URL(route(l === "en" ? "en" : "es", section, slug), Astro.site)
+              .href
+          }
+        />
+      ))}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={lang === "es" ? "es_EC" : "en_US"} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
+    {!section && <meta name="robots" content="noindex" />}
+    {section && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(structured)}
+      />
+    )}
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      {t("Saltar al contenido", "Skip to content")}
+    </a>
+    <header class="site-header">
+      <div class="wrap masthead">
+        <a
+          class="brand"
+          href={route(lang, "home")}
+          aria-label={t("Mateo Rubio, inicio", "Mateo Rubio, home")}
+        >
+          <span class="monogram" aria-hidden="true">
+            MR
+          </span>
+          <span>Mateo Rubio</span>
+        </a>
+        <nav
+          class="desktop-nav"
+          aria-label={t("Navegación principal", "Main navigation")}
+        >
+          {sections.map((key) => (
+            <a
+              aria-current={
+                section === key ? (slug ? "location" : "page") : undefined
+              }
+              href={route(lang, key)}
+            >
+              {labels[lang][key]}
+            </a>
+          ))}
+        </nav>
+        <div class="header-tools flex items-center gap-3">
+          <a
+            class="language"
+            lang={alternate}
+            hreflang={alternate}
+            href={
+              section
+                ? route(alternate, section, slug)
+                : route(alternate, "home")
+            }
+            aria-label={t("Switch to English", "Cambiar a español")}
+          >
+            {alternate.toUpperCase()}
+          </a>
+          <details class="mobile-nav">
+            <summary aria-label={t("Menú principal", "Main menu")}>
+              <Menu size={22} aria-hidden="true" />
+            </summary>
+            <nav aria-label={t("Navegación principal", "Main navigation")}>
+              {sections.map((key) => (
+                <a
+                  aria-current={
+                    section === key ? (slug ? "location" : "page") : undefined
+                  }
+                  href={route(lang, key)}
+                >
+                  {labels[lang][key]}
+                </a>
+              ))}
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-row">
+        <span>© {new Date().getUTCFullYear()} Mateo Rubio</span>
+        <nav aria-label={t("Navegación secundaria", "Footer navigation")}>
+          {sections.map((key) => (
+            <a href={route(lang, key)}>{labels[lang][key]}</a>
+          ))}
+        </nav>
+        <div class="socials">
+          <a href={profile.github}>
+            <GitFork size={17} aria-hidden="true" /> GitHub
+          </a>
+          <a href={profile.linkedin}>
+            <BriefcaseBusiness size={17} aria-hidden="true" /> LinkedIn
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

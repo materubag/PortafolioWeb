@@ -1,0 +1,123 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Pipeline from "./Pipeline.astro";
+import { route, translate } from "../i18n";
+import { projectsFor } from "../utils/projects";
+const { entry } = Astro.props as { entry: CollectionEntry<"projects"> };
+const p = entry.data;
+const t = (es: string, en: string) => translate(p.lang, es, en);
+const { Content } = await render(entry);
+const others = (await projectsFor(p.lang)).filter(
+  ({ data }) => data.slug !== p.slug,
+);
+---
+
+<Base
+  lang={p.lang}
+  section="projects"
+  slug={p.slug}
+  title={p.title}
+  description={p.description}
+>
+  <div class="wrap page">
+    <a class="text-link" href={route(p.lang, "projects")}>
+      {t("Todos los proyectos", "All projects")}
+    </a>
+    <div class="case-heading">
+      <div>
+        <p class="eyebrow">{p.category}</p>
+        <h1>{p.title}</h1>
+        <p class="lede">{p.subtitle}</p>
+      </div>
+      <img
+        class:list={["case-cover", p.theme]}
+        src={p.cover ?? `/images/projects/${p.slug}/cover.svg`}
+        width="520"
+        height="260"
+        alt=""
+      />
+    </div>
+    <dl class="case-facts">
+      <div>
+        <dt>{t("Período", "Period")}</dt>
+        <dd>{p.period}</dd>
+      </div>
+      {p.role && (
+        <div>
+          <dt>{t("Rol", "Role")}</dt>
+          <dd>{p.role}</dd>
+        </div>
+      )}
+      {p.status && (
+        <div>
+          <dt>{t("Estado", "Status")}</dt>
+          <dd>{p.status}</dd>
+        </div>
+      )}
+    </dl>
+    <article class="prose">
+      <h2>{t("Resumen", "Overview")}</h2>
+      <p>{p.summary}</p>
+      <Content />
+      {["trello-github", "face-access-cnn"].includes(p.slug) && (
+        <Pipeline slug={p.slug} lang={p.lang} />
+      )}
+      {p.contributions.length > 0 && (
+        <>
+          <h2>{t("Mis contribuciones", "My contributions")}</h2>
+          <ul>
+            {p.contributions.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      <h2>{t("Tecnologías", "Technologies")}</h2>
+      <div class="tags">
+        {p.technologies.map((item) => (
+          <span>{item}</span>
+        ))}
+      </div>
+      <h2>{t("Resultados y aprendizajes", "Results and takeaways")}</h2>
+      <ul>
+        {p.results.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+      {p.limitations.length > 0 && (
+        <>
+          <h2>{t("Limitaciones", "Limitations")}</h2>
+          <ul>
+            {p.limitations.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      <h2>{t("Repositorios", "Repositories")}</h2>
+      <div class="flex flex-wrap gap-3">
+        {p.repositories.map(({ label, url }) => (
+          <a class="button outline" href={url}>
+            {label}
+          </a>
+        ))}
+        {p.demo && (
+          <a class="button outline" href={p.demo}>
+            {t("Ver demo", "View demo")}
+          </a>
+        )}
+      </div>
+    </article>
+    <aside class="other-projects">
+      <h2>{t("Otros proyectos", "Other projects")}</h2>
+      <div class="flex flex-wrap gap-3">
+        {others.map(({ data }) => (
+          <a class="button outline" href={route(p.lang, "projects", data.slug)}>
+            {data.title}
+          </a>
+        ))}
+      </div>
+    </aside>
+  </div>
+</Base>

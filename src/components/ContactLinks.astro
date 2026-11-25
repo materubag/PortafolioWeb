@@ -1,0 +1,52 @@
+---
+import { GitFork, BriefcaseBusiness, Mail, Copy } from "@lucide/astro";
+import { profile } from "../data/profile";
+import { translate, type Lang } from "../i18n";
+const { lang, copy = false } = Astro.props as { lang: Lang; copy?: boolean };
+const t = (es: string, en: string) => translate(lang, es, en);
+---
+
+<div class="contact-links">
+  <a href={`mailto:${profile.email}`}>
+    <Mail size={18} aria-hidden="true" /> {profile.email}
+  </a>
+  {copy && (
+    <button
+      hidden
+      class="button outline"
+      type="button"
+      data-copy={profile.email}
+      data-success={t("Correo copiado.", "Email copied.")}
+      data-failure={t(
+        "Selecciona y copia el correo manualmente.",
+        "Select and copy the email manually.",
+      )}
+    >
+      <Copy size={16} aria-hidden="true" />
+      {t("Copiar correo", "Copy email")}
+    </button>
+  )}
+  <a href={profile.github}>
+    <GitFork size={18} aria-hidden="true" /> GitHub
+  </a>
+  <a href={profile.linkedin}>
+    <BriefcaseBusiness size={18} aria-hidden="true" /> LinkedIn
+  </a>
+</div>
+{copy && <p class="copy-feedback" role="status"></p>}
+<script>
+  const button = document.querySelector<HTMLButtonElement>("[data-copy]");
+  if (button && navigator.clipboard) {
+    button.hidden = false;
+    button.addEventListener("click", async () => {
+      const feedback = document.querySelector(".copy-feedback");
+      if (!feedback) return;
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? "");
+        feedback.textContent = button.dataset.success ?? "";
+      } catch {
+        feedback.textContent = button.dataset.failure ?? "";
+      }
+    });
+  }
+</script>

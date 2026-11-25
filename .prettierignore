@@ -1,0 +1,7 @@
+dist
+.astro
+.pdf-tools
+.local-tools
+test-results
+playwright-report
+package-lock.json

@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  lang="es"
+  title="Página no encontrada"
+  description="La página solicitada no está disponible."
+>
+  <section class="wrap page narrow">
+    <p class="eyebrow">404</p>
+    <h1>Página no encontrada</h1>
+    <p class="lede">
+      La dirección puede haber cambiado. Puedes volver al inicio o explorar los
+      proyectos.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a class="button solid" href="/">
+        Volver al inicio
+      </a>
+      <a class="button outline" href="/proyectos/">
+        Ver proyectos
+      </a>
+      <a class="button outline" href="/en/" lang="en">
+        English homepage
+      </a>
+    </div>
+  </section>
+</Base>
