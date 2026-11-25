@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260">
+  <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0v20" fill="none" stroke="#286558" stroke-opacity=".12"/></pattern></defs>
+  <rect width="520" height="260" fill="url(#grid)"/>
+  <g fill="#eef7f2" stroke="#286558" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M38 160h29l16-24h40l22 24h15v25H38z"/><circle cx="68" cy="185" r="9"/><circle cx="133" cy="185" r="9"/><path d="M103 128c-13-11-20-18-20-29a20 20 0 0 1 40 0c0 11-7 18-20 29z"/><circle cx="103" cy="98" r="6"/><path d="M124 98h56m99 0h84m-9-5 9 5-9 5M230 121v51m197-51v51" fill="none" stroke-dasharray="4 5"/><rect x="180" y="76" width="99" height="45" rx="5"/><rect x="363" y="76" width="128" height="45" rx="5"/><path d="M208 173h44v23c0 10-44 10-44 0zm197 0h44v23c0 10-44 10-44 0z"/><ellipse cx="230" cy="173" rx="22" ry="7"/><ellipse cx="427" cy="173" rx="22" ry="7"/>
+  </g>
+  <g fill="#286558" text-anchor="middle" font-family="monospace" font-size="13">
+    <text x="230" y="103">Traccar</text>
+    <text x="319" y="88">REST API</text>
+    <text x="427" y="103">Odoo Fleet</text>
+    <text x="427" y="144">fleet_traccar</text>
+  </g>
+</svg>
