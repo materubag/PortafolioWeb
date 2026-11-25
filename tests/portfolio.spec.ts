@@ -3,7 +3,19 @@ import { expect, test } from "@playwright/test";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const slugs = ["cm-stock", "conlac-t", "trello-github", "face-access-cnn"];
+const featuredSlugs = [
+  "cm-stock",
+  "conlac-t",
+  "trello-github",
+  "face-access-cnn",
+];
+const slugs = [
+  ...featuredSlugs,
+  "flota-traccar",
+  "reasons",
+  "icase",
+  "smartpick-recommender",
+];
 const es = [
   "/",
   "/proyectos/",
@@ -83,6 +95,95 @@ for (const width of [375, 768, 1024, 1440]) {
     }
   });
 }
+
+test("catalog filters all eight projects and home retains the original four", async ({
+  page,
+  browser,
+}) => {
+  const filters = {
+    web: ["cm-stock", "conlac-t", "reasons"],
+    integration: ["flota-traccar"],
+    automation: ["trello-github"],
+    ai: ["face-access-cnn", "smartpick-recommender"],
+    engineering: ["icase"],
+    all: slugs,
+  };
+  const noScript = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const staticPage = await noScript.newPage();
+    for (const [home, catalog, singular, plural] of [
+      ["/", "/proyectos/", "proyecto", "proyectos"],
+      ["/en/", "/en/projects/", "project", "projects"],
+    ]) {
+      await page.goto(home);
+      const links = page.locator(".project-card a");
+      await expect(links).toHaveCount(4);
+      for (const [i, slug] of featuredSlugs.entries()) {
+        await expect(links.nth(i)).toHaveAttribute(
+          "href",
+          catalog + slug + "/",
+        );
+      }
+      await staticPage.goto(catalog);
+      await expect(staticPage.locator(".project-card:visible")).toHaveCount(8);
+      await expect(staticPage.getByRole("status")).toHaveText("8 " + plural);
+      await page.goto(catalog);
+      await expect(page.getByRole("status")).toHaveText("8 " + plural);
+      for (const [category, expected] of Object.entries(filters)) {
+        const button = page.locator(`button[data-filter="${category}"]`);
+        await button.focus();
+        await page.keyboard.press("Enter");
+        await expect(button).toHaveAttribute("aria-pressed", "true");
+        const visible = page.locator(".project-card:visible a");
+        await expect(visible).toHaveCount(expected.length);
+        for (const [i, slug] of expected.entries()) {
+          await expect(visible.nth(i)).toHaveAttribute(
+            "href",
+            catalog + slug + "/",
+          );
+        }
+        await expect(page.getByRole("status")).toHaveText(
+          expected.length + " " + (expected.length === 1 ? singular : plural),
+        );
+      }
+    }
+  } finally {
+    await noScript.close();
+  }
+});
+
+test("new case studies link to their specified repositories and back to the catalog", async ({
+  page,
+}) => {
+  const repositories = {
+    "flota-traccar": ["materubag/ProyectoFlotaTraccar"],
+    reasons: ["materubag/REASONS_Frontend", "materubag/REASONS_backend"],
+    icase: ["materubag/Proyecto_ICase"],
+    "smartpick-recommender": [
+      "Cuadrado1224/SmartPick-frontend",
+      "Cuadrado1224/SmartPick-backend",
+    ],
+  };
+  for (const catalog of ["/proyectos/", "/en/projects/"]) {
+    for (const [slug, expected] of Object.entries(repositories)) {
+      await page.goto(catalog + slug + "/");
+      const links = page.locator(
+        "article.prose a[href^='https://github.com/']",
+      );
+      await expect(links).toHaveCount(expected.length);
+      for (const [i, repository] of expected.entries()) {
+        await expect(links.nth(i)).toHaveAttribute(
+          "href",
+          "https://github.com/" + repository,
+        );
+      }
+      await expect(page.locator("main a.text-link").first()).toHaveAttribute(
+        "href",
+        catalog,
+      );
+    }
+  }
+});
 
 test("mobile menu and language switch work without JavaScript", async ({
   browser,
